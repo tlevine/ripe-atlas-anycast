@@ -52,4 +52,16 @@ Each line is a probe, and each measurement is a dot.') +
               slope = m$coefficients[[2]]) +
   geom_abline(intercept = 0, slope = 1.444 * 2 * (1000/299792))
 
-print(p3)
+p4 <- ggplot(anycast.probe) +
+  aes(x = dist, y = rt, shape = dst_city) +
+  ggtitle('Targetting any.ca-servers.something
+Each line is a probe, and each measurement is a dot.') +
+  scale_x_continuous('Distance (km)', labels = comma) +
+  scale_y_continuous('Min response time (ms)', labels = comma) +
+# annotate('text', 4200, 10, label = 'Speed of light through fibre') +
+  geom_point(alpha = 0.2, size = dist_theoretical_improvement) +
+  geom_abline(intercept = m$coefficients[[1]],
+              slope = m$coefficients[[2]]) +
+  geom_abline(intercept = 0, slope = 1.444 * 2 * (1000/299792))
+
+print(p4)
