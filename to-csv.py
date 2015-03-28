@@ -18,6 +18,7 @@ columns = [
   "msm_name",
   "prb_id",
   "proto",
+  "rt",
   "src_addr",
   "src_lat",
   "src_lon",
@@ -31,4 +32,5 @@ writer = csv.writer(sys.stdout)
 
 writer.writerow(columns)
 for row in anycast:
+    row['rt'] = row['result']['rt']
     writer.writerow([row[column] for column in columns])
