@@ -1,6 +1,8 @@
 #!/usr/bin/env Rscript
 library(ggplot2)
 library(scales)
+library(MASS)
+library(plyr)
 
 anycast <- read.csv('anycast.csv', stringsAsFactors = FALSE)
 anycast$as <- anycast$asn_v4
@@ -8,29 +10,12 @@ anycast[anycast$asf == 6,'as'] <- anycast[anycast$asf == 6,'asn_v6']
 anycast$asn_v4 <- anycast$asn_v6 <- NULL
 anycast$af <- factor(anycast$af, levels = c(4, 6))
 
-for (prb_id in unique(anycast$prb_id)) {
-  anycast[anycast$prb_id == prb_id,'probe.min.rt'] <-
-    min(anycast[anycast$prb_id == prb_id,'rt'])
-}
-
-probe <- data.frame(
-  id = unique(anycast$prb_id),
-  min.rt = sapply(unique(anycast$prb_id),
-                  function(prb_id) min(anycast[anycast$prb_id == prb_id,'rt'])),
-  dist = sapply(unique(anycast$prb_id),
-                function(prb_id) min(anycast[anycast$prb_id == prb_id,'dist'])))
-m <- rlm(min.rt ~ dist, data = probe)
-
-#theta <- anycast$dst_
-#anycast$dist <-
-#theta = lon2 - lon1
-#dist = acos(sin(lat1) × sin(lat2) + cos(lat1) × cos(lat2) × cos(theta))
-#if (dist < 0) dist = dist + pi
-#dist = dist × 6371.2 
-
-#p <- ggplot(subset(anycast, dist < 10^4 & lts < 500)) +
-
 anycast.nearby <- subset(anycast, rt < 100) # dist < 600)
+
+anycast.probe <- ddply(anycast, 'prb_id', function(df) {
+  df[order(df$rt)[1],]
+})
+m <- rlm(rt ~ dist, data = anycast.probe)
 
 p1 <- ggplot(anycast) +
   aes(x = dist, y = rt, group = prb_id, color = dst_city) +
@@ -55,4 +40,16 @@ Each line is a probe, and each measurement is a dot.') +
               slope = m$coefficients[[2]]) +
   geom_abline(intercept = 0, slope = 1.444 * 2 * (1000/299792))
 
-print(p2)
+p3 <- ggplot(anycast.probe) +
+  aes(x = dist, y = rt, color = dst_city) +
+  ggtitle('Targetting any.ca-servers.something
+Each line is a probe, and each measurement is a dot.') +
+  scale_x_continuous('Distance (km)', labels = comma) +
+  scale_y_continuous('Response time (ms)', labels = comma) +
+# annotate('text', 4200, 10, label = 'Speed of light through fibre') +
+  geom_point(alpha = 0.2, size = 32) +
+  geom_abline(intercept = m$coefficients[[1]],
+              slope = m$coefficients[[2]]) +
+  geom_abline(intercept = 0, slope = 1.444 * 2 * (1000/299792))
+
+print(p3)
