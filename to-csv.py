@@ -8,6 +8,7 @@ columns = [
   "country_code",
   "dist",
   "dst_addr",
+  "dst_city",
   "dst_lat",
   "dst_lon",
   "from",

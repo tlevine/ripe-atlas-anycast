@@ -24,22 +24,17 @@ names(prb.rts) <- unique(anycast$prb_id)
 #dist = dist × 6371.2 
 
 #p <- ggplot(subset(anycast, dist < 10^4 & lts < 500)) +
-#anycast.outliers <- subset(anycast, lts > 500)
-p <- ggplot(anycast) +
+anycast.nearby <- subset(anycast, dist < 600)
+p <- ggplot(anycast.nearby) +
   aes(x = dist, y = rt, group = prb_id) +
   ggtitle('Targetting any.ca-servers.something
 Each line is a probe, and each measurement is a dot.') +
   scale_x_continuous('Distance (km)', labels = comma) +
   scale_y_continuous('Response time (ms)', labels = comma) +
+# annotate('text', 4200, 150, label = 'Speed of light through fibre', color = 'red') +
+# annotate('text', 4500,  50, label = 'Speed of light through space') +
   geom_point(alpha = 0.4) + geom_line(alpha = 0.2) +
   geom_abline(intercept = 0, slope = 2 * (1000/299792), color = 'red') +
-  geom_abline(intercept = 0, slope = 1.444 * 2 * (1000/299792)) +
-  annotate('text', 4200, 150, label = 'Speed of light through fibre', color = 'red') +
-  annotate('text', 4500,  50, label = 'Speed of light through space')
-# geom_point(y = anycast$probe.min.rt, color = 'red')
-# geom_text(data = anycast.outliers,
-#           x = anycast.outliers$dist,
-#           y = 1000 + 3 * (anycast.outliers$dist %% 100),
-#           label = anycast.outliers$prb_id)
+  geom_abline(intercept = 0, slope = 1.444 * 2 * (1000/299792))
 
 print(p)
