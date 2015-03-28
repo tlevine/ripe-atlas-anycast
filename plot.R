@@ -12,9 +12,14 @@ for (prb_id in unique(anycast$prb_id)) {
   anycast[anycast$prb_id == prb_id,'probe.min.rt'] <-
     min(anycast[anycast$prb_id == prb_id,'rt'])
 }
-prb.rts <- sapply(unique(anycast$prb_id),
-                  function(prb_id) min(anycast[anycast$prb_id == prb_id,'rt']))
-names(prb.rts) <- unique(anycast$prb_id)
+
+probe <- data.frame(
+  id = unique(anycast$prb_id),
+  min.rt = sapply(unique(anycast$prb_id),
+                  function(prb_id) min(anycast[anycast$prb_id == prb_id,'rt'])),
+  dist = sapply(unique(anycast$prb_id),
+                function(prb_id) min(anycast[anycast$prb_id == prb_id,'dist'])))
+m <- rlm(min.rt ~ dist, data = probe)
 
 #theta <- anycast$dst_
 #anycast$dist <-
@@ -46,6 +51,8 @@ Each line is a probe, and each measurement is a dot.') +
 # annotate('text', 4200, 10, label = 'Speed of light through fibre') +
   geom_point(alpha = 0.4) + geom_line(alpha = 0.2) +
   aes(label = prb_id) + geom_text() +
+  geom_abline(intercept = m$coefficients[[1]],
+              slope = m$coefficients[[2]]) +
   geom_abline(intercept = 0, slope = 1.444 * 2 * (1000/299792))
 
 print(p2)
