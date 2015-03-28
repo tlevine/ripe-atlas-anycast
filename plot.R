@@ -24,17 +24,28 @@ names(prb.rts) <- unique(anycast$prb_id)
 #dist = dist × 6371.2 
 
 #p <- ggplot(subset(anycast, dist < 10^4 & lts < 500)) +
-anycast.nearby <- subset(anycast, dist < 600)
-p <- ggplot(anycast.nearby) +
-  aes(x = dist, y = rt, group = prb_id) +
+
+anycast.nearby <- subset(anycast, rt < 100) # dist < 600)
+
+p1 <- ggplot(anycast) +
+  aes(x = dist, y = rt, group = prb_id, color = dst_city) +
   ggtitle('Targetting any.ca-servers.something
 Each line is a probe, and each measurement is a dot.') +
   scale_x_continuous('Distance (km)', labels = comma) +
   scale_y_continuous('Response time (ms)', labels = comma) +
-# annotate('text', 4200, 150, label = 'Speed of light through fibre', color = 'red') +
-# annotate('text', 4500,  50, label = 'Speed of light through space') +
+  annotate('text', 4200, 10, label = 'Speed of light through fibre') +
   geom_point(alpha = 0.4) + geom_line(alpha = 0.2) +
-  geom_abline(intercept = 0, slope = 2 * (1000/299792), color = 'red') +
   geom_abline(intercept = 0, slope = 1.444 * 2 * (1000/299792))
 
-print(p)
+p2 <- ggplot(anycast.nearby) +
+  aes(x = dist, y = rt, group = prb_id, color = dst_city) +
+  ggtitle('Targetting any.ca-servers.something
+Each line is a probe, and each measurement is a dot.') +
+  scale_x_continuous('Distance (km)', labels = comma) +
+  scale_y_continuous('Response time (ms)', labels = comma) +
+# annotate('text', 4200, 10, label = 'Speed of light through fibre') +
+  geom_point(alpha = 0.4) + geom_line(alpha = 0.2) +
+  aes(label = prb_id) + geom_text() +
+  geom_abline(intercept = 0, slope = 1.444 * 2 * (1000/299792))
+
+print(p2)
