@@ -32,7 +32,11 @@ Each line is a probe, and each measurement is a dot.') +
   scale_x_continuous('Distance (km)', labels = comma) +
   scale_y_continuous('Response time (ms)', labels = comma) +
   geom_point(alpha = 0.4) + geom_line(alpha = 0.2) +
-  geom_point(y = anycast$probe.min.rt, color = 'red')
+  geom_abline(intercept = 0, slope = 2 * (1000/299792), color = 'red') +
+  geom_abline(intercept = 0, slope = 1.444 * 2 * (1000/299792)) +
+  annotate('text', 4200, 150, label = 'Speed of light through fibre', color = 'red') +
+  annotate('text', 4500,  50, label = 'Speed of light through space')
+# geom_point(y = anycast$probe.min.rt, color = 'red')
 # geom_text(data = anycast.outliers,
 #           x = anycast.outliers$dist,
 #           y = 1000 + 3 * (anycast.outliers$dist %% 100),
