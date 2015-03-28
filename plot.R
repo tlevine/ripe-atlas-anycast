@@ -53,15 +53,31 @@ Each line is a probe, and each measurement is a dot.') +
   geom_abline(intercept = 0, slope = 1.444 * 2 * (1000/299792))
 
 p4 <- ggplot(anycast.probe) +
-  aes(x = dist, y = rt, shape = dst_city) +
+  aes(x = dist, y = rt, color = dst_city,
+      size = dist_theoretical_improvement) +
   ggtitle('Targetting any.ca-servers.something
 Each line is a probe, and each measurement is a dot.') +
   scale_x_continuous('Distance (km)', labels = comma) +
   scale_y_continuous('Min response time (ms)', labels = comma) +
 # annotate('text', 4200, 10, label = 'Speed of light through fibre') +
-  geom_point(alpha = 0.2, size = dist_theoretical_improvement) +
+  geom_point(alpha = 0.2) +
   geom_abline(intercept = m$coefficients[[1]],
               slope = m$coefficients[[2]]) +
   geom_abline(intercept = 0, slope = 1.444 * 2 * (1000/299792))
 
-print(p4)
+p5 <- ggplot(anycast.probe) +
+  aes(x = dist, size = rt, color = dst_city,
+      y = dist - dist_theoretical_improvement) +
+  ggtitle('Targetting any.ca-servers.something
+Each line is a probe, and each measurement is a dot.') +
+  scale_x_continuous('Distance to chosen instance (km)', labels = comma) +
+  scale_y_continuous('Distance to closest instance (km)', labels = comma) +
+  scale_size_area(max_size = 20) +
+ #scale_size_continuous('Min response time (ms)', labels = comma) +
+  geom_abline(slope = 1) +
+  annotate('text', 5000, 100, label = 'Indirect routes') +
+  annotate('text', 200, 1250, label = 'Direct routes') +
+  coord_flip() +
+  geom_point(alpha = 0.2)
+
+print(p5)
