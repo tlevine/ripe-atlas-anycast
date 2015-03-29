@@ -1,27 +1,28 @@
 library(scales)
 library(ggplot2)
 library(RColorBrewer)
+# colors <- paste0(brewer.pal(12, 'Set3'), '99')
+# names(colors)[1:length(levels(anycast.probe$dst_city))] <- levels(anycast.probe$dst_city)
+
 
 video <- function(anycast.probe) {
-  colors <- paste0(brewer.pal(12, 'Set3'), '99')
-  names(colors)[1:length(levels(anycast.probe$dst_city))] <- levels(anycast.probe$dst_city)
-
   step <- as.difftime(60, units = 'mins')
-  hours <- as.POSIXct(seq.Date(as.Date('2015-01-01'),as.Date('2015-03-01'), step))
+  starts <- as.POSIXct(seq.Date(as.Date(min(anycast.probe$datetime)),
+                                as.Date(max(anycast.probe$datetime) + as.difftime(1, units = 'days')),
+                                step))
+  print(starts)
   for (start in starts) {
     png(sprintf('frames/%s.png', start), width = 800, height = 450)
     print(frame(anycast.probe,
-                subset(anycast.probe, datetime >= start & datetime < start + step),
-                color = colors[city][[1]]))
+                subset(anycast.probe, datetime >= start & datetime < start + step)))
     dev.off()
   }
 }
 
 frame <- function(df.full, df, color = 'black')
   ggplot(df) +
-    aes(y = dist, size = rt,
-        x = dist_theoretical_improvement) +
-    ggtitle('Targetting any.ca-servers.something') +
+    aes(x = dist_theoretical_improvement, y = dist, size = rt, color = dst_city) +
+    ggtitle('Targetting 173.245.58.117 (anycast)') +
     scale_y_continuous('Distance to chosen instance (km)',
                        labels = comma, limits = range(df.full$dist)) +
     scale_x_continuous('Distance farther than the closest instance (km)',
