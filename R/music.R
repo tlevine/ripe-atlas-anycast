@@ -14,11 +14,15 @@ drumlike <- function(freq, duration) {
 }
 
 
-phrase <- function(df.full, df) {
+phrase <- function(df.full, df, base.pitch = 22) {
+  # Rhythm speed: Number of measurements
   base.duration <- 2 ^ (2 - floor(nrow(df) / 20))
+
   # syncopation <- number of probes
+
   # Response time divided by speed of light through fiber
   .selector <- order(anycast.probe$rt)[round(nrow(anycast.probe)/2)]
-  pitch <- df[.selector,'rt'] / (LIGHT.THROUGH.FIBER * df[.selector,'dist'])
-  print(pitch)
+  .rt.normalized <- df[.selector,'rt'] / (LIGHT.THROUGH.FIBER * df[.selector,'dist'])
+  pitch <- base.pitch + intervals$P1 + (.rt.normalized > 3) * intervals$P4
+  
 }
