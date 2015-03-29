@@ -95,8 +95,13 @@ frame <- function(df, df.full = anycast.probe)
     annotate('text', 0.1 * max(df.full$dist_theoretical_improvement), 0.5 * max(df.full$dist), label = 'Direct routes') +
     geom_point(alpha = 0.2)
 
-for (x in unique(anycast.probe$dst_city)) {
-  png(sprintf('frames/%s.png', x), width = 800, height = 450)
-  print(frame(subset(anycast.probe, dst_city == x)))
-  dev.off()
+ps <- list(p1, p2, p3, p4, p5)
+for (i in 1:length(ps)) {
+  ggsave(sprintf('%s.png', i), ps[[i]], dpi = 150, width = 12, height = 9)
 }
+
+#for (x in unique(anycast.probe$dst_city)) {
+#  png(sprintf('frames/%s.png', x), width = 800, height = 450)
+#  print(frame(subset(anycast.probe, dst_city == x)))
+#  dev.off()
+#}
