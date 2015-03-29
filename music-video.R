@@ -16,3 +16,5 @@ anycast$dst_city <- factor(anycast$dst_city)
 anycast.probe <- ddply(anycast, 'prb_id', function(df) {
   df[order(df$rt)[1],]
 })
+
+video(anycast.probe)

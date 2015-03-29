@@ -1,6 +1,6 @@
 library(devtools)
 unloadNamespace('devtools')
-devtools::load_all('../krounq')
+devtools::load_all('../../krounq')
 
 
 TEMPO <- 216 # multiple of 24, for easy division

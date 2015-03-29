@@ -1,18 +1,20 @@
+library(scales)
 library(ggplot2)
 library(RColorBrewer)
 
-video <- function() {
+video <- function(anycast.probe) {
   colors <- paste0(brewer.pal(12, 'Set3'), '99')
   names(colors)[1:length(levels(anycast.probe$dst_city))] <- levels(anycast.probe$dst_city)
   for (city in levels(anycast.probe$dst_city)) {
     png(sprintf('frames/%s.png', city), width = 800, height = 450)
-    print(frame(subset(anycast.probe, dst_city == city),
+    print(frame(anycast.probe,
+                subset(anycast.probe, dst_city == city),
                 color = colors[city][[1]]))
     dev.off()
   }
 }
 
-frame <- function(df, df.full = anycast.probe, color = 'black')
+frame <- function(df.full, df, color = 'black')
   ggplot(df) +
     aes(y = dist, size = rt,
         x = dist_theoretical_improvement) +
