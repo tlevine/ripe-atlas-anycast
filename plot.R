@@ -9,6 +9,7 @@ anycast$as <- anycast$asn_v4
 anycast[anycast$asf == 6,'as'] <- anycast[anycast$asf == 6,'asn_v6']
 anycast$asn_v4 <- anycast$asn_v6 <- NULL
 anycast$af <- factor(anycast$af, levels = c(4, 6))
+anycast$dst_city <- factor(anycast$dst_city)
 
 anycast.nearby <- subset(anycast, rt < 100) # dist < 600)
 
@@ -80,4 +81,22 @@ Each line is a probe, and each measurement is a dot.') +
   coord_flip() +
   geom_point(alpha = 0.2)
 
-print(p5)
+frame <- function(df, df.full = anycast.probe)
+  ggplot(df) +
+    aes(y = dist, size = rt, color = dst_city,
+        x = dist_theoretical_improvement) +
+    ggtitle('Targetting any.ca-servers.something') +
+    scale_y_continuous('Distance to chosen instance (km)',
+                       labels = comma, limits = range(df.full$dist)) +
+    scale_x_continuous('Distance farther than the closest instance (km)',
+                       labels = comma, limits = range(df.full$dist_theoretical_improvement)) +
+    scale_size_continuous('Min response time (ms)', labels = comma) +
+    annotate('text', 0.9 * max(df.full$dist_theoretical_improvement), 0.5 * max(df.full$dist), label = 'Indirect routes') +
+    annotate('text', 0.1 * max(df.full$dist_theoretical_improvement), 0.5 * max(df.full$dist), label = 'Direct routes') +
+    geom_point(alpha = 0.2)
+
+for (x in unique(anycast.probe$dst_city)) {
+  png(sprintf('frames/%s.png', x), width = 800, height = 450)
+  print(frame(subset(anycast.probe, dst_city == x)))
+  dev.off()
+}
