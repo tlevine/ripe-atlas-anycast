@@ -20,5 +20,27 @@ anycast.probe <- ddply(anycast, 'prb_id', function(df) {
   df[order(df$rt)[1],]
 })
 
-video(anycast.probe)
+music.step <- 3600 * 3
+video.step <- 3600
+music.starts <- seq(min(anycast$timestamp), max(anycast$timestamp) + music.step, music.step)
+video.starts <- seq(min(anycast$timestamp), max(anycast$timestamp) + video.step, video.step)
+
+video <- function(anycast) {
+  for (start in video.starts) {
+    png(sprintf('frames/%s.png', start), width = 1600, height = 900)
+    df <- subset(anycast, timestamp >= start & timestamp < start + video.step)
+    frame(anycast, df)
+    dev.off()
+  }
+}
+
+music <- function(anycast) {
+  for (start in music.starts) {
+    anycast[anycast$timestamp >= start,'start'] <- start
+  }
+  do.call(c,lapply(unique(anycast$start),
+                   function(start) plot.phrase(anycast[anycast$start == start,])))
+}
+# video(anycast)
+# music(anycast)
 # krounq::play(phrase(anycast.probe, subset(anycast.probe, dst_city == 'LHR')))

@@ -5,17 +5,6 @@ library(RColorBrewer)
 colors <- paste0(brewer.pal(12, 'Set3'), '99')
 names(colors)[1:length(levels(anycast.probe$dst_city))] <- levels(anycast.probe$dst_city)
 
-video <- function(anycast.probe) {
-  step <- 3600
-  starts <- seq(min(anycast.probe$timestamp), max(anycast.probe$timestamp) + step, step)
-  for (start in starts) {
-    png(sprintf('frames/%s.png', start), width = 1600, height = 900)
-    df <- subset(anycast.probe, timestamp >= start & timestamp < start + step)
-    frame(anycast.probe, df)
-    dev.off()
-  }
-}
-
 frame <- function(df.full, df) {
   fg <- 'grey60'
   bg <- 'black'

@@ -63,14 +63,12 @@ RHYTHMS <- list(c(1, 2, 3, 4.5, 5, 6, 7, 8, 8.5),
                 c(1, 2, 3, 3 + 2/3, 4 + 1/3, 5, 6, 6.5, 7, 7.5, 8, 8.5),
                 c(1, 3, 5, 7), 1:8)
 
-p <- function(row)
-  phrase(key = 30, speed = row$Sepal.Length - 1,
+plot.phrase <- function(df) {
+  phrase(key = 30, speed = nrow(df),
          pickup = scales$major[round(row$Sepal.Width - 1)],
          drums = row$Petal.Length > 3,
          rhythm = RHYTHMS[[row$rhythm]])
-
-music <- function(anycast) {
-  anycast$rhythm <- as.numeric(anycast$Species)
-  is <- order(anycast$Petal.Width)[seq(1, 150, length.out = 12)]
-  do.call(c,lapply(is, function(i) p(anycast[i,])))
 }
+
+#music <- function(anycast.hour) {
+ # anycast.hour$rhythm <- as.numeric(anycast.hour$Species)
