@@ -38,8 +38,9 @@ music <- function(anycast) {
   for (start in music.starts) {
     anycast[anycast$timestamp >= start,'start'] <- start
   }
+  df <- anycast[anycast$start == start,]
   do.call(c,lapply(unique(anycast$start),
-                   function(start) plot.phrase(anycast[anycast$start == start,])))
+                   function(start) plot.phrase(df)))
 }
 # video(anycast)
 # music(anycast)

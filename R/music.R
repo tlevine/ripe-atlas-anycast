@@ -4,10 +4,11 @@ library(ddr)
 data(roland)
 unloadNamespace('ddr')
 
-devtools::load_all('../krounq')
+devtools::load_all('../../krounq')
 #source('generate-data.R')
 
 TEMPO <- 216 # multiple of 24, for easy division
+LIGHT.THROUGH.FIBER <- 1.444 * 2 * (1000/299792)
 
 norm <- function(x) {
   x / max(abs(x))
@@ -37,7 +38,7 @@ snare <- sample.instrument(norm(roland$SD0@left))
 hihat <- sample.instrument(norm(roland$HHO@left))
 rim <- sample.instrument(norm(roland$RIM@left))
 
-phrase <- function(key = 30, speed = 0, pickup = NULL, drums = TRUE,
+phrase <- function(key = 30, speed = 2, pickup = NULL, drums = TRUE,
                    rhythm = c(1, 4)) {
   base.duration <- 2 ^ (4 - floor(speed))
 
@@ -64,11 +65,25 @@ RHYTHMS <- list(c(1, 2, 3, 4.5, 5, 6, 7, 8, 8.5),
                 c(1, 3, 5, 7), 1:8)
 
 plot.phrase <- function(df) {
-  phrase(key = 30, speed = nrow(df),
-         pickup = scales$major[round(row$Sepal.Width - 1)],
-         drums = row$Petal.Length > 3,
-         rhythm = RHYTHMS[[row$rhythm]])
-}
+  # Response time divided by speed of light through fiber
+  if (nrow(df) > 0) {
+     .selector <- order(df$rt)[round(nrow(df)/2)]
+    .rt.normalized <- df[.selector,'rt'] / (LIGHT.THROUGH.FIBER * df[.selector,'dist'])
+  } else {
+    .rt.normalized <- NULL
+  }
 
-#music <- function(anycast.hour) {
- # anycast.hour$rhythm <- as.numeric(anycast.hour$Species)
+  # Number of different cities
+  rhythm <- length(unique(df$dst_city))
+  if (rhythm > 4)
+    rhythm <- 4
+
+  print(list(key = 30, speed = max(1, nrow(df)),
+         pickup = scales$major[round(.rt.normalized)],
+         drums = nrow(df) > 0,
+         rhythm = RHYTHMS[[rhythm]]))
+  phrase(key = 30, speed = max(1, nrow(df)),
+         pickup = scales$major[round(.rt.normalized)],
+         drums = nrow(df) > 0,
+         rhythm = RHYTHMS[[rhythm]])
+}

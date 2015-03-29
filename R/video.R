@@ -1,11 +1,9 @@
-library(scales)
-library(ggplot2)
 library(RColorBrewer)
 
-colors <- paste0(brewer.pal(12, 'Set3'), '99')
-names(colors)[1:length(levels(anycast.probe$dst_city))] <- levels(anycast.probe$dst_city)
-
 frame <- function(df.full, df) {
+  colors <- paste0(brewer.pal(12, 'Set3'), '99')
+  names(colors)[1:length(levels(df.full$dst_city))] <- levels(df.full$dst_city)
+
   fg <- 'grey60'
   bg <- 'black'
   par(fg = fg, col = fg, col.axis = fg,
