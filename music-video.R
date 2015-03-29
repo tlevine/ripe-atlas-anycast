@@ -1,8 +1,9 @@
 #!/usr/bin/env Rscript
-library(ggplot2)
-library(scales)
 library(MASS)
 library(plyr)
+library(RColorBrewer)
+
+COLORS <- paste0(brewer.pal(12, 'Set3'), '99')
 
 anycast <- read.csv('anycast.csv', stringsAsFactors = FALSE)
 anycast$as <- anycast$asn_v4
@@ -17,21 +18,27 @@ anycast.probe <- ddply(anycast, 'prb_id', function(df) {
 m <- rlm(rt ~ dist, data = anycast.probe)
 
 frame <- function(df.full, low, high) {
-  df <- subset(df.full, dist >= low & dist < high)
+  df <- subset(df.full, rt >= low & rt < high)
   plot(dist ~ dist_theoretical, data = df.full, type = 'n',
-       axes = F)
-  axis(1)
+       axes = F, xlim = c(0, 12000), ylim = c(0, 12000), asp = 1)
+  axis(1, at = seq(0, 12000, 2000))
   axis(2)
-  points(df$dist ~ df$dist_theoretical, pch = 21, bg = df$dst_city,
-         )
+  abline(0, 1)
+  points(df$dist ~ df$dist_theoretical, pch = 21, bg = COLORS[df$dst_city],
+         lwd = 0, cex = sqrt(df$rt))
 }
 
-N.VERSES <- 7
-N.PHRASES <- N.VERSES * 4
+video <- function() {
+  N.VERSES <- 7
+  N.PHRASES <- N.VERSES * 4
 
-dist.step <- round(max(anycast$dist) / N.PHRASES, -2)
-for (dist in seq(0, max(anycast$dist) + dist.step, dist.step)) {
-  png(sprintf('frames/%08d.png', dist), width = 800, height = 450)
-  frame(anycast.probe, dist, dist + dist.step)
-  dev.off()
+  rt.step <- round(max(anycast$rt) / N.PHRASES, -2)
+  for (rt in seq(0, max(anycast$rt) + rt.step, rt.step)) {
+    png(sprintf('frames/%08d.png', rt), width = 800, height = 450)
+    frame(anycast.probe, rt, rt + rt.step)
+    dev.off()
+  }
 }
+
+#frame(anycast.probe, 0, 12000)
+video()
