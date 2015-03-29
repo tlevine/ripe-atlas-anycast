@@ -69,6 +69,8 @@ p <- function(row)
          drums = row$Petal.Length > 3,
          rhythm = RHYTHMS[[row$rhythm]])
 
-iris$rhythm <- as.numeric(iris$Species)
-is <- order(iris$Petal.Width)[seq(1, 150, length.out = 12)]
-play(do.call(c,lapply(is, function(i) p(iris[i,]))))
+music <- function(anycast) {
+  anycast$rhythm <- as.numeric(anycast$Species)
+  is <- order(anycast$Petal.Width)[seq(1, 150, length.out = 12)]
+  do.call(c,lapply(is, function(i) p(anycast[i,])))
+}
