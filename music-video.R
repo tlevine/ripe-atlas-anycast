@@ -6,6 +6,8 @@ library(devtools)
 unloadNamespace('devtools')
 devtools::load_all()
 
+devtools::load_all('../krounq')
+
 anycast <- read.csv('anycast.csv', stringsAsFactors = FALSE)
 anycast$as <- anycast$asn_v4
 anycast[anycast$asf == 6,'as'] <- anycast[anycast$asf == 6,'asn_v6']
@@ -18,3 +20,4 @@ anycast.probe <- ddply(anycast, 'prb_id', function(df) {
 })
 
 # video(anycast.probe)
+krounq::play(phrase(anycast.probe, subset(anycast.probe, dst_city == 'LHR')))
