@@ -6,7 +6,6 @@ library(RColorBrewer)
 library(devtools)
 unloadNamespace('devtools')
 devtools::load_all('../krounq')
-source('../krounq/generate-data.R')
 
 anycast <- read.csv('anycast.csv', stringsAsFactors = FALSE)
 anycast$as <- anycast$asn_v4
@@ -37,11 +36,13 @@ frame <- function(df, df.full = anycast.probe, color = 'black')
 phrase <- function(df) {
 }
 
-colors <- paste0(brewer.pal(12, 'Set3'), '99')
-names(colors)[1:length(levels(anycast.probe$dst_city))] <- levels(anycast.probe$dst_city)
-for (city in levels(anycast.probe$dst_city)) {
-  png(sprintf('frames/%s.png', city), width = 800, height = 450)
-  print(frame(subset(anycast.probe, dst_city == city),
-              color = colors[city][[1]]))
-  dev.off()
+main <- function() {
+  colors <- paste0(brewer.pal(12, 'Set3'), '99')
+  names(colors)[1:length(levels(anycast.probe$dst_city))] <- levels(anycast.probe$dst_city)
+  for (city in levels(anycast.probe$dst_city)) {
+    png(sprintf('frames/%s.png', city), width = 800, height = 450)
+    print(frame(subset(anycast.probe, dst_city == city),
+                color = colors[city][[1]]))
+    dev.off()
+  }
 }
