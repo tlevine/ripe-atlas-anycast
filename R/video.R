@@ -5,7 +5,6 @@ library(RColorBrewer)
 colors <- paste0(brewer.pal(12, 'Set3'), '99')
 names(colors)[1:length(levels(anycast.probe$dst_city))] <- levels(anycast.probe$dst_city)
 
-
 video <- function(anycast.probe) {
   step <- 3600
   starts <- seq(min(anycast.probe$timestamp), max(anycast.probe$timestamp) + step, step)
@@ -32,8 +31,8 @@ frame <- function(df.full, df) {
        xlab = 'Distance farther than the closest instance (km)',
        ylab = 'Distance to chosen instance (km)',
        sub = 'Each dot is a measurement. Bigger dots have higher latency.',
-       xlim = c(0.8, 1.2) * range(df.full$dist_theoretical_improvement),
-       ylim = c(0.8, 1.2) * range(df.full$dist))
+       xlim = c(0.8, 1.1) * range(df.full$dist_theoretical_improvement),
+       ylim = c(0.8, 1.1) * range(df.full$dist))
   axis(1, at = seq(0, max(df.full$dist_theoretical_improvement), 2e2))
   axis(2, at = seq(0, max(df.full$dist), 1e3))
   points(df$dist ~ df$dist_theoretical_improvement,
