@@ -39,6 +39,7 @@ drumlike <- function(freq, duration) {
 phrase <- function(df.full, df, base.pitch = 22) {
   # Rhythm speed: Number of measurements
   base.duration <- 2 ^ (4 - floor(nrow(df) / 20))
+  speed <- ceiling(nrow(df) / 70)
 
   # syncopation <- number of probes
 
@@ -49,13 +50,16 @@ phrase <- function(df.full, df, base.pitch = 22) {
   
   a <- sequence(durations = base.duration, instrument = snare,
                 tempo = TEMPO, beats = 8)
-  b <- function(key)
+  b <- function(key, speed) {
+    starts <- c(1, 2, 3, 4.5, 5, 6, 7, 8, 8.5)
+    start.priorities <- c(1, 5, 7, 3, 8, 9, 4, 7, 2)
     sequence(frequencies = P.n(key),
-             starts = c(1, 2, 3, 4.5, 5, 6, 7, 8, 8.5),
+             starts = starts,
              durations = base.duration,
-             instrument = drumlike,
+             instrument = drumlike[start.priorities[1:speed]],
              tempo = TEMPO,
              beats = 8)
+  }
 
-  c(b(base.pitch), b(pitch)) + a * 3
+  c(b(base.pitch, speed), b(pitch, speed)) + a * 3
 }
