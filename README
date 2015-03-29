@@ -1,2 +1,19 @@
+Conclusions
+
 * How to route better
 * Errors in data
+
+Music video
+
+Facet/time
+    Distance to chosen anycast instance
+X
+    Distance to closest anycast instance
+Y
+    Response time
+Rhythm speed
+    Count of measurements
+Rhythm syncopation
+    Count of probes
+Pitch
+    Response time divided by speed of light through fiber
