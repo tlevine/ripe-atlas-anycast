@@ -18,14 +18,23 @@ video <- function(anycast.probe) {
 }
 
 frame <- function(df.full, df) {
+  fg <- 'grey60'
+  bg <- 'black'
+  par(fg = fg, col = fg, col.axis = fg,
+      col.lab = fg, col.main = fg, col.sub = fg,
+      cex.axis = 2,
+      las = 1, bg = bg)
+
   plot(dist ~ dist_theoretical_improvement, data = df.full, type = 'n',
        main = 'Targetting 173.245.58.117 (anycast)',
        axes = F,
        xlab = 'Distance farther than the closest instance (km)',
        ylab = 'Distance to chosen instance (km)',
        sub = 'Each dot is a measurement. Bigger dots have higher latency.',
-       xlim = c(1, 1.2) * range(df.full$dist_theoretical_improvement),
-       ylim = c(1, 1.2) * range(df.full$dist))
+       xlim = 1.2 * range(df.full$dist_theoretical_improvement),
+       ylim = 1.2 * range(df.full$dist))
+  axis(1, at = seq(0, max(df.full$dist_theoretical_improvement), 2e3))
+  axis(2, at = seq(0, max(df.full$dist), 2e3))
   points(df$dist ~ df$dist_theoretical_improvement,
          pch = 21, lwd = 0, cex = sqrt(df$rt), bg = colors[df$dst_city])
   text(x = c(0.9, 0.1) * max(df.full$dist_theoretical_improvement),
