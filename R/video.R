@@ -6,20 +6,17 @@ library(RColorBrewer)
 
 
 video <- function(anycast.probe) {
-  step <- as.difftime(60, units = 'mins')
-  starts <- as.POSIXct(seq.Date(as.Date(min(anycast.probe$datetime)),
-                                as.Date(max(anycast.probe$datetime) + as.difftime(1, units = 'days')),
-                                step))
-  print(starts)
+  step <- 3600
+  starts <- seq(min(anycast.probe$timestamp), max(anycast.probe$timestamp) + step, step)
   for (start in starts) {
     png(sprintf('frames/%s.png', start), width = 800, height = 450)
-    print(frame(anycast.probe,
-                subset(anycast.probe, datetime >= start & datetime < start + step)))
+    df <- subset(anycast.probe, timestamp >= start & timestamp < start + step)
+    print(frame(anycast.probe, df))
     dev.off()
   }
 }
 
-frame <- function(df.full, df, color = 'black')
+frame <- function(df.full, df)
   ggplot(df) +
     aes(x = dist_theoretical_improvement, y = dist, size = rt, color = dst_city) +
     ggtitle('Targetting 173.245.58.117 (anycast)') +
@@ -30,4 +27,4 @@ frame <- function(df.full, df, color = 'black')
     scale_size_continuous('Min response time (ms)', labels = comma) +
     annotate('text', 0.9 * max(df.full$dist_theoretical_improvement), 0.5 * max(df.full$dist), label = 'Indirect routes') +
     annotate('text', 0.1 * max(df.full$dist_theoretical_improvement), 0.5 * max(df.full$dist), label = 'Direct routes') +
-    geom_point(alpha = 0.5, color = color)
+    geom_point(alpha = 0.5)
