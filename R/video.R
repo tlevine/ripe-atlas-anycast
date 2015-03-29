@@ -24,11 +24,11 @@ frame <- function(df.full, df) {
        xlab = 'Distance farther than the closest instance (km)',
        ylab = 'Distance to chosen instance (km)',
        sub = 'Each dot is a measurement. Bigger dots have higher latency.',
-       xlim = range(df.full$dist_theoretical_improvement),
-       ylim = range(df.full$dist))
+       xlim = c(1, 1.2) * range(df.full$dist_theoretical_improvement),
+       ylim = c(1, 1.2) * range(df.full$dist))
   points(df$dist ~ df$dist_theoretical_improvement,
          pch = 21, lwd = 0, cex = sqrt(df$rt), bg = colors[df$dst_city])
   text(x = c(0.9, 0.1) * max(df.full$dist_theoretical_improvement),
-       y = 0.5 * max(df.full$dist),
+       y = 0.2 * max(df.full$dist),
        label = c('Indirect routes', 'Direct routes'))
 }
